@@ -22,7 +22,10 @@ analysis including `cmdag` for DAG visualization, `cmest` for statistical modeli
 See the package [website](https://bs1125.github.io/CMAverse/) for a quickstart guide, an overview of statistical modeling approaches and examples.
 
 Cite the paper: [CMAverse
-a suite of functions for reproducible causal mediation analyses](https://journals.lww.com/epidem/citation/9000/cmaverse__a_suite_of_functions_for_reproducible.98264.aspx)
+a suite of functions for reproducible causal mediation analyses](https://journals.lww.com/epidem/citation/9000/cmaverse__a_suite_of_functions_for_reproducible.98264.aspx). 
+
+Cite as well, if using `cmest_multistate`: [Multistate approach for stochastic interventions on a time-to-event mediator in the presence of competing risks: A new R command within the CMAverse R
+package](https://journals.lww.com/epidem/fulltext/2025/01000/multistate_approach_for_stochastic_interventions.17.aspx).  
 
 We welcome your feedback and questions:
 
