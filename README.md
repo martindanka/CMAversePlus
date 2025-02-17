@@ -1,6 +1,6 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# CMAverse: a suite of functions for causal mediation analysis<img src="man/figures/logo.png" align="right" width="240" />
+# CMAverse: a suite of functions for causal mediation analysis<img src="man/figures/logo.png" align="right" width="240"/>
 
 [![Project Status:
 Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
@@ -21,7 +21,12 @@ examples.
 
 Cite the paper: [CMAverse a suite of functions for reproducible causal
 mediation
-analyses](https://journals.lww.com/epidem/citation/9000/cmaverse__a_suite_of_functions_for_reproducible.98264.aspx)
+analyses](https://journals.lww.com/epidem/citation/9000/cmaverse__a_suite_of_functions_for_reproducible.98264.aspx).
+
+Cite as well, if using `cmest_multistate`: [Multistate approach for
+stochastic interventions on a time-to-event mediator in the presence of
+competing risks: A new R command within the CMAverse R
+package](https://journals.lww.com/epidem/fulltext/2025/01000/multistate_approach_for_stochastic_interventions.17.aspx).
 
 We welcome your feedback and questions:
 
@@ -38,19 +43,19 @@ We welcome your feedback and questions:
 ### Statistical Modeling
 
 `cmest` implements six causal mediation analysis approaches including
-*the regression-based approach* by [Valeri et
-al. (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3659198/) and
-[VanderWeele et
-al. (2014)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4287269/), *the
-weighting-based approach* by [VanderWeele et
-al. (2014)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4287269/), *the
+*the regression-based approach* by [Valeri et al.
+(2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3659198/) and
+[VanderWeele et al.
+(2014)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4287269/), *the
+weighting-based approach* by [VanderWeele et al.
+(2014)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4287269/), *the
 inverse odd-ratio weighting approach* by [Tchetgen Tchetgen
 (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3954805/), *the
-natural effect model* by [Vansteelandt et
-al. (2012)](https://www.degruyter.com/view/journals/em/1/1/article-p131.xml?language=en),
-*the marginal structural model* by [VanderWeele et
-al. (2017)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5560424/), and
-*the g-formula approach* by [Robins
+natural effect model* by [Vansteelandt et al.
+(2012)](https://www.degruyter.com/view/journals/em/1/1/article-p131.xml?language=en),
+*the marginal structural model* by [VanderWeele et al.
+(2017)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5560424/), and *the
+g-formula approach* by [Robins
 (1986)](https://www.sciencedirect.com/science/article/pii/0270025586900886).
 
 `cmest` currently supports a single exposure, multiple sequential
@@ -71,6 +76,15 @@ mediators. The two causal scenarios supported are:
 <table>
 <caption>Table: Supported Data Types and Functionalities of
 <code>cmest</code></caption>
+<colgroup>
+<col style="width: 49%" />
+<col style="width: 8%" />
+<col style="width: 7%" />
+<col style="width: 6%" />
+<col style="width: 5%" />
+<col style="width: 7%" />
+<col style="width: 15%" />
+</colgroup>
 <thead>
 <tr class="header">
 <th></th>
@@ -330,45 +344,44 @@ id="fnref10" role="doc-noteref"><sup>10</sup></a></td>
 </tr>
 </tbody>
 </table>
-<section class="footnotes footnotes-end-of-document"
+<section id="footnotes" class="footnotes footnotes-end-of-document"
 role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>rb: the regression-based approach;
-wb: the weighting-based approach; iorw: the inverse odds ratio weighting
+<li id="fn1"><p>rb: the regression-based approach; wb: the
+weighting-based approach; iorw: the inverse odds ratio weighting
 approach; ne: the natural effect model; msm: the marginal structural
 model; gformula: the g-formula approach.<a href="#fnref1"
 class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2" role="doc-endnote"><p>Y denotes the outcome, A denotes the
-exposure, M denotes the mediator(s) and C denotes the exposure-outcome
-confounder(s), the exposure-mediator confounder(s) and the
-mediator-outcome confounder(s) not affected by the exposure.<a
-href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3" role="doc-endnote"><p>continuous A is not supported when C
-is not empty; otherwise, it is supported.<a href="#fnref3"
-class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn4" role="doc-endnote"><p>continuous A is not supported when C
-is not empty; otherwise, it is supported.<a href="#fnref4"
-class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn5" role="doc-endnote"><p>count A is not supported when C is
-not empty; otherwise, it is supported.<a href="#fnref5"
-class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn6" role="doc-endnote"><p>count A is not supported when C is
-not empty; otherwise, it is supported.<a href="#fnref6"
-class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn7" role="doc-endnote"><p>closed-form parameter function
-estimation only supports a single mediator.<a href="#fnref7"
-class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn8" role="doc-endnote"><p>delta method inference is available
-only when closed-form parameter function estimation is used.<a
-href="#fnref8" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn9" role="doc-endnote"><p>marginal effects are estimated when
-direct counterfactual imputation estimation is used.<a href="#fnref9"
-class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn10" role="doc-endnote"><p>conditional effects are estimated
-when closed-form parameter function estimation is used.<a
-href="#fnref10" class="footnote-back"
+<li id="fn2"><p>Y denotes the outcome, A denotes the exposure, M denotes
+the mediator(s) and C denotes the exposure-outcome confounder(s), the
+exposure-mediator confounder(s) and the mediator-outcome confounder(s)
+not affected by the exposure.<a href="#fnref2" class="footnote-back"
 role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>continuous A is not supported when C is not empty;
+otherwise, it is supported.<a href="#fnref3" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>continuous A is not supported when C is not empty;
+otherwise, it is supported.<a href="#fnref4" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>count A is not supported when C is not empty; otherwise,
+it is supported.<a href="#fnref5" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>count A is not supported when C is not empty; otherwise,
+it is supported.<a href="#fnref6" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p>closed-form parameter function estimation only supports
+a single mediator.<a href="#fnref7" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn8"><p>delta method inference is available only when
+closed-form parameter function estimation is used.<a href="#fnref8"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn9"><p>marginal effects are estimated when direct
+counterfactual imputation estimation is used.<a href="#fnref9"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn10"><p>conditional effects are estimated when closed-form
+parameter function estimation is used.<a href="#fnref10"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
@@ -382,17 +395,17 @@ imputations for a dataset with missing values.
 ### Sensitivity Analysis
 
 `cmsens` conducts sensitivity analysis for unmeasured confounding via
-the *E-value* approach by [VanderWeele et
-al. (2017)](https://pubmed.ncbi.nlm.nih.gov/28693043/) and [Smith et
-al. (2019)](https://pubmed.ncbi.nlm.nih.gov/31348008/), and sensitivity
+the *E-value* approach by [VanderWeele et al.
+(2017)](https://pubmed.ncbi.nlm.nih.gov/28693043/) and [Smith et al.
+(2019)](https://pubmed.ncbi.nlm.nih.gov/31348008/), and sensitivity
 analysis for measurement error via *regression calibration* by [Carroll
 et al. (1995)](https://www.taylorfrancis.com/books/9780429139635) and
-*SIMEX* by [Cook et
-al. (1994)](https://www.jstor.org/stable/2290994?seq=1#metadata_info_tab_contents)
-and [Küchenhoff et
-al. (2006)](https://pubmed.ncbi.nlm.nih.gov/16542233/). Sensitivity
-analysis for measurement error is currently available for *the
-regression-based approach* and *the g-formula approach*.
+*SIMEX* by [Cook et al.
+(1994)](https://www.jstor.org/stable/2290994?seq=1#metadata_info_tab_contents)
+and [Küchenhoff et al.
+(2006)](https://pubmed.ncbi.nlm.nih.gov/16542233/). Sensitivity analysis
+for measurement error is currently available for *the regression-based
+approach* and *the g-formula approach*.
 
 ## Installation
 
