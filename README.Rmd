@@ -11,7 +11,7 @@ editor_options:
 knitr::opts_chunk$set(fig.path = "man/figures/")
 ```
 
-# CMAverse: a suite of functions for causal mediation analysis<img src="man/figures/logo.png" align="right" width="240"/>
+# CMAversePlus: a fork of CMAverse with Risk Ratios and Conditional Interventional Draws <img src="man/figures/logo.png" align="right" width="240"/>
 
 [![Project Status:
 Active](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
