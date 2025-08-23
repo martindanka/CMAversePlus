@@ -2,23 +2,28 @@ name: Knit README
 on:
   push:
     paths:
-      - README.Rmd         # run when README.Rmd changes
-  workflow_dispatch:        # <-- allows “Run workflow” button
+      - README.Rmd
+  workflow_dispatch:      # adds the “Run workflow” button
 
 permissions:
-  contents: write           # needed to commit README.md
+  contents: write         # allows committing README.md
 
 jobs:
   knit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: r-lib/actions/setup-r@v2
-      - name: Install rmarkdown & knitr (+ anything used in chunks)
-        run: R -q -e 'install.packages(c("rmarkdown","knitr","dagitty"))'
-      - name: Render README
-        run: R -q -e 'rmarkdown::render("README.Rmd", output_format="github_document", output_file="README.md")'
-      - name: Commit README.md
+      - name: Install deps used in README
+        run: |
+          R -q -e 'install.packages(c("rmarkdown","knitr"))'
+          R -q -e 'if (!requireNamespace("dagitty", quietly=TRUE)) install.packages("dagitty")'
+      - name: Render README.Rmd → README.md
+        run: |
+          R -q -e 'rmarkdown::render("README.Rmd", output_format="github_document", output_file="README.md", quiet=TRUE)'
+      - name: Commit README.md (if changed)
         uses: EndBug/add-and-commit@v9
         with:
           add: README.md
