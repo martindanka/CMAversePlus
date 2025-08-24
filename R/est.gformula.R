@@ -1,4 +1,4 @@
-est.gformula <- function(data = NULL, indices = NULL, outReg = FALSE, full = TRUE) {
+est.gformula <- function(data = NULL, indices = NULL, outReg = FALSE, full = TRUE, draw_conditional = NULL) {
   if (is.null(indices)) indices <- 1:n
   # resample data
   data <- data[indices, ]
@@ -23,7 +23,7 @@ est.gformula <- function(data = NULL, indices = NULL, outReg = FALSE, full = TRU
     # update mreg
     for (p in 1:length(mediator)) {
       if (!is.null(weights_mreg[[p]])) weights_mreg[[p]] <- weights_mreg[[p]][indices] * w4casecon
-      if (is.null(weights_mreg[[p]])) weights_mreg[[p]] <- w4casecon
+      if (is.null(weights_mreg[[p]])) weights_mreg[[p]] <- w4casecon 
       call_mreg[[p]]$weights <- weights_mreg[[p]]
       call_mreg[[p]]$data <- data
       if (outReg && (inherits(mreg[[p]], "rcreg") | inherits(mreg[[p]], "simexreg"))) call_mreg[[p]]$variance <- TRUE
@@ -293,13 +293,21 @@ est.gformula <- function(data = NULL, indices = NULL, outReg = FALSE, full = TRU
     } else stop(paste0("Unsupported mreg[[", p, "]]"))
     
     # randomly shuffle values of simulated mediator[p] if postc is not empty
-    if (length(postc) != 0) {
+    
+    ### >>> CMAversePLUS CHANGE: Optionally keep the conditional draw <<<
+    
+    # Decide whether to shuffle
+    do_shuffle <- (!isTRUE(draw_conditional)) && (length(postc) != 0)
+    
+    if (do_shuffle) {
       m_a[full_index, p] <- sample(mid_a, replace = FALSE)
       m_astar[full_index, p] <- sample(mid_astar, replace = FALSE)
     } else {
       m_a[full_index, p] <- mid_a
       m_astar[full_index, p] <- mid_astar
     }
+    
+    ### >>> CMAversePLUS CHANGE <<<
     
     if (is.factor(data[, mediator[p]])) {
       m_lev <- levels(droplevels(as.factor(data[, mediator[p]])))
@@ -373,9 +381,14 @@ est.gformula <- function(data = NULL, indices = NULL, outReg = FALSE, full = TRU
   }
   rm(weightsEY, EY0m_pred, EY1m_pred, EY00_pred, EY01_pred, EY10_pred, EY11_pred)
   
+  ### CMAversePlus ADDED: Helpers for choosing the effect (for binary outcomes) ###
+  is_binary_y  <- (is_glm_yreg && family_yreg$family %in% c("binomial","quasibinomial"))
+  use_additive <- ((is_lm_yreg | is_glm_yreg) &&
+                     (family_yreg$family %in% c("gaussian","inverse.gaussian","Gamma","quasi"))) ||
+    (is_binary_y && identical(binary_scale, "RD"))
+  
   # output causal effects in additive scale for continuous Y
-  if ((is_lm_yreg | is_glm_yreg) &&
-      (family_yreg$family %in% c("gaussian", "inverse.gaussian", "Gamma", "quasi"))) {
+  if (use_additive) {
     cde <- EY1m - EY0m
     pnde <- EY10 - EY00
     tnde <- EY11 - EY01
@@ -401,8 +414,9 @@ est.gformula <- function(data = NULL, indices = NULL, outReg = FALSE, full = TRU
     # output causal effects in ratio scale for non-continuous Y
     
     ## output effects on the odds ratio scale for logistic regressions
-    if (is_glm_yreg && family_yreg$family %in% c("binomial", "quasibinomial") &&
-        family_yreg$link == "logit") {
+    ### CMAverse plus CHANGE ###
+    if (is_binary_y && identical(binary_scale, "OR") && family_yreg$link == "logit") {
+      ### CMAverse plus END OF CHANGE ###
       logRRcde <- log(EY1m/(1-EY1m)) - log(EY0m/(1-EY0m))
       logRRpnde <- log(EY10/(1-EY10)) - log(EY00/(1-EY00))
       logRRtnde <- log(EY11/(1-EY11)) - log(EY01/(1-EY01))

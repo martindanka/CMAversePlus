@@ -392,14 +392,33 @@ estinf <- function() {
     #############################################G-formula Approach####################################
     ###################################################################################################
     environment(est.gformula) <- environment()
+    
+    ### CMAversePlus ADDED: Safety fall back ### 
+    if (!exists("draw_conditional")) draw_conditional <- FALSE
+    ### CMAversePlus ADDED: Safety fall back ### 
+    
     if (!multimp) {
       # point estimates of causal effects
-      est <- est.gformula(data = data, indices = NULL, outReg = TRUE, full = full)
+      est <- est.gformula(data = data, indices = NULL, outReg = TRUE, full = full, draw_conditional = draw_conditional)
       effect.pe <- est$est
       n_effect <- length(effect.pe)
       out$reg.output <- est$reg.output
       # bootstrap results
-      boots <- boot(data = data, statistic = est.gformula, R = nboot, outReg = FALSE, full = full)
+      ### CMAversePlus ADDED ###
+      boots <- boot(
+        data = data,
+        statistic = function(d, idx) {
+          est.gformula(
+            data = d, 
+            indices = idx, 
+            outReg = FALSE, 
+            full = full, 
+            draw_conditional = draw_conditional
+            )
+          },
+        R = nboot
+      )
+      ### CMAversePlus ADDED ###
       # bootstrap CIs
       environment(boot.ci) <- environment()
       effect.ci <- boot.ci(boots = boots)
@@ -413,7 +432,7 @@ estinf <- function() {
       m <- length(data_imp)
       # estimate causal effects for each imputed data set
       est_imp <- lapply(1:m, function(x)
-        est.gformula(data = data_imp[[x]], indices = NULL, outReg = TRUE, full = full))
+        est.gformula(data = data_imp[[x]], indices = NULL, outReg = TRUE, full = full, draw_conditional = draw_conditional))
       est_imp_df <- do.call(rbind, lapply(1:m, function(x) est_imp[[x]]$est))
       effect.pe <- colMeans(est_imp_df)
       n_effect <- length(effect.pe)
@@ -427,7 +446,7 @@ estinf <- function() {
         assign("counter", curVal + 1, envir = env)
         setTxtProgressBar(get("progbar", envir = env), curVal + 1)
         return(colMeans(do.call(rbind, lapply(1:m, function(x)
-          est.gformula(data = data_imp[[x]], outReg = FALSE, full = full)))))
+          est.gformula(data = data_imp[[x]], outReg = FALSE, full = full, draw_conditional = draw_conditional)))))
       }
       environment(boot.step) <- environment()
       # bootstrap results
@@ -441,8 +460,12 @@ estinf <- function() {
       effect.pval <- sapply(1:n_effect, function(x) boot.pval(boots = boots$t[, x], pe = effect.pe[x]))
     }
     
-    if ((is_lm_yreg | is_glm_yreg) &&
-        (family_yreg$family %in% c("gaussian", "inverse.gaussian", "Gamma", "quasi"))) {
+    ### CMAVerse Plus MODIFIED ### 
+    is_binary_y  <- (is_glm_yreg && family_yreg$family %in% c("binomial","quasibinomial"))
+    use_additive <- ((is_lm_yreg | is_glm_yreg) &&
+                       (family_yreg$family %in% c("gaussian","inverse.gaussian","Gamma","quasi"))) ||
+      (is_binary_y && identical(binary_scale, "RD"))
+    if (use_additive) {
       # standard errors by bootstrapping
       effect.se <- sapply(1:n_effect, function(x) sd(boots$t[, x]))
       # effect names

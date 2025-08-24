@@ -82,6 +82,11 @@
 #' @param x an object of class \code{cmest}
 #' @param object an object of class \code{cmest}
 #' @param digits minimal number of significant digits. See \link{print.default}.
+#' @param draw_conditional logical. If TRUE, mediator draws are conditional (values not permuted). 
+#' If FALSE (default), mediator draws are marginal.
+#' @param binary_scale character. For binary outcomes only, choose the effect scale:
+#' "OR" (odds ratio), "RR" (risk ratio), or "RD" (risk difference). 
+#' Ignored for non-binary outcomes. Defaults to "OR" (although "RR" or "RD" are preferred). 
 #' 
 #' @details
 #' 
@@ -423,7 +428,9 @@ cmest <- function(data = NULL, model = "rb",
                   yreg = NULL, mreg = NULL, wmnomreg = NULL, wmdenomreg = NULL, ereg = NULL, 
                   postcreg = NULL,
                   astar = 0, a = 1, mval = NULL, yval = NULL, basecval = NULL,
-                  nboot = 200, boot.ci.type = "per", nRep = 5, multimp = FALSE, args_mice = NULL) {
+                  nboot = 200, boot.ci.type = "per", nRep = 5, multimp = FALSE, args_mice = NULL,
+                  draw_conditional = FALSE, binary_scale = c("OR", "RR", "RD") # CMAversePlus Extra Args
+                  ) {
   # function call
   cl <- match.call()
   # output list
@@ -445,6 +452,16 @@ cmest <- function(data = NULL, model = "rb",
   # full
   if (!is.logical(full)) stop("full should be TRUE or FALSE")
   out$methods$full <- full
+  
+  ### >>> CMAversePLUS ADDED <<< Additional effects for binary outcomes ###
+  binary_scale <- match.arg(binary_scale)
+  out$methods$binary_scale <- binary_scale
+  ### >>> CMAversePLUS ADDED <<< ### 
+  
+  ### >>> CMAversePLUS ADDED <<< keep the flag so estinf() and printers can use it
+  out$methods$draw_conditional <- isTRUE(draw_conditional)
+  ### >>> CMAversePLUS ADDED <<< ### 
+  
   # casecontrol, yrare, yprevalence
   if (!is.logical(casecontrol)) stop("casecontrol should be TRUE or FALSE")
   out$methods$casecontrol <- casecontrol
@@ -568,6 +585,13 @@ cmest <- function(data = NULL, model = "rb",
   wmdenomreg <- regs$wmdenomreg
   postcreg <- regs$postcreg
   
+  # test if outcome is binary (2 levels)
+  is_binary_outcome <- length(unique(na.omit(as.factor(data[, outcome])))) == 2
+  if (!is_binary_outcome && !identical(binary_scale, "OR")) {
+    warning("binary_scale is only used for binary outcomes; ignoring.")
+    out$methods$binary_scale <- "OR"
+  }
+  
   ###################################################################################################
   ############################################Estimation and Inference###############################
   ###################################################################################################
@@ -580,6 +604,24 @@ cmest <- function(data = NULL, model = "rb",
   # estimation and inference of causal effects
   environment(estinf) <- environment()
   out <- c(out, estinf())
+  
+  # --- rename TE -> rTE for g-formula (randomized analogues) ---
+  is_gformula <- identical(out$methods$model, "gformula")
+  has_postc   <- !is.null(out$variables$postc) && length(out$variables$postc) != 0  # keep if you want RA only with postc
+  
+  if (is_gformula && has_postc) {   # remove "&& has_postc" if you want it for all gformula runs
+    rename_te <- function(nm) {
+      nm <- sub("^te$",  "rte",  nm)
+      nm <- sub("^Rte$", "rRte", nm)
+      nm
+    }
+    for (slot in c("effect.pe","effect.se","effect.ci.low","effect.ci.high","effect.pval")) {
+      if (!is.null(out[[slot]])) {
+        names(out[[slot]]) <- rename_te(names(out[[slot]]))
+      }
+    }
+  }
+  
   class(out) <- "cmest"
   return(out)
 }
@@ -801,6 +843,28 @@ print.cmest <- function(x, ...) {
   full <- x$methods$full
   model <- x$methods$model
   EMint <- x$variables$EMint
+  
+  ### >>> CMAversePLUS ADDED <<<
+  is_gformula <- identical(model, "gformula")
+  has_postc <- length(x$variables$postc) != 0
+  
+  # TE label helper: emits plain TE or randomized analogue of TE, with the right symbol
+  make_te_lab <- function(kind = c("add","rate","rr","or","hr","msr")) {
+    kind <- match.arg(kind)
+    ra   <- is_gformula && has_postc
+    sym  <- if (kind == "add") { if (ra) "rte" else "te" } else { if (ra) "rRte" else "Rte" }
+    tail <- switch(kind,
+                   add = "",
+                   rate = " rate ratio",
+                   rr = " risk ratio",
+                   or = " odds ratio",
+                   hr = " hazard ratio",
+                   msr = " mean survival ratio")
+    desc <- if (ra) paste0("randomized analogue of total effect", tail) else paste0("total effect", tail)
+    paste0(sym, ": ", desc)
+  }
+  ### >>> CMAversePLUS ADDED <<<
+  
   if (model == "iorw") {
     if (x$multimp$multimp) yreg_mid <- x$reg.output[[1]]$yregTot
     if (!x$multimp$multimp) yreg_mid <- x$reg.output$yregTot
@@ -925,6 +989,41 @@ print.cmest <- function(x, ...) {
     }
   }
   
+  ### >>> CMAversePLUS CHANGE: g-formula binary-scale override (minimal diff) <<<
+  binary_scale <- tryCatch(x$methods$binary_scale, error = function(e) NULL)
+  is_binary_glm <- is_glm && family_yreg$family %in% c("binomial","quasibinomial")
+  
+  if (identical(model, "gformula") && is_binary_glm && !is.null(binary_scale)) {
+    if (identical(binary_scale, "RR")) {
+      scale  <- "risk ratio scale"
+      legend <- gsub("odds ratio", "risk ratio", legend, fixed = TRUE)
+    } else if (identical(binary_scale, "RD")) {
+      scale <- "risk difference scale"
+      if (length(x$variables$postc) != 0) {
+        if (full) {
+          if (EMint) {
+            legend <- "(cde: controlled direct effect; rpnde: randomized analogue of pure natural direct effect; rtnde: randomized analogue of total natural direct effect; rpnie: randomized analogue of pure natural indirect effect; rtnie: randomized analogue of total natural indirect effect; rte: randomized analogue of total effect; rintref: randomized analogue of reference interaction; rintmed: randomized analogue of mediated interaction; cde(prop): proportion cde; rintref(prop): proportion rintref; rintmed(prop): proportion rintmed; rpnie(prop): proportion rpnie; rpm: randomized analogue of overall proportion mediated; rint: randomized analogue of overall proportion attributable to interaction; rpe: randomized analogue of overall proportion eliminated)"
+          } else {
+            legend <- "(cde: controlled direct effect; rpnde: randomized analogue of pure natural direct effect; rtnde: randomized analogue of total natural direct effect; rpnie: randomized analogue of pure natural indirect effect; rtnie: randomized analogue of total natural indirect effect; rte: randomized analogue of total effect; rpm: randomized analogue of overall proportion mediated)"
+          }
+        } else {
+          legend <- "(cde: controlled direct effect; rpnde: randomized analogue of pure natural direct effect; rtnde: randomized analogue of total natural direct effect; rpnie: randomized analogue of pure natural indirect effect; rtnie: randomized analogue of total natural indirect effect; rte: randomized analogue of total effect)"
+        }
+      } else {
+        if (full) {
+          if (EMint) {
+            legend <- "(cde: controlled direct effect; pnde: pure natural direct effect; tnde: total natural direct effect; pnie: pure natural indirect effect; tnie: total natural indirect effect; te: total effect; intref: reference interaction; intmed: mediated interaction; cde(prop): proportion cde; intref(prop): proportion intref; intmed(prop): proportion intmed; pnie(prop): proportion pnie; pm: overall proportion mediated; int: overall proportion attributable to interaction; pe: overall proportion eliminated)"
+          } else {
+            legend <- "(cde: controlled direct effect; pnde: pure natural direct effect; tnde: total natural direct effect; pnie: pure natural indirect effect; tnie: total natural indirect effect; te: total effect; pm: overall proportion mediated)"
+          }
+        } else {
+          legend <- "(cde: controlled direct effect; pnde: pure natural direct effect; tnde: total natural direct effect; pnie: pure natural indirect effect; tnie: total natural indirect effect; te: total effect)"
+        }
+      }
+    }
+  }
+  ### >>> END CMAversePLUS CHANGE <<<
+  
   # print causal mediation analysis results
   if (x$methods$model == "rb") model_str <- "regression-based approach"
   if (x$methods$model == "wb") model_str <- "weighting-based approach"
@@ -946,6 +1045,16 @@ print.cmest <- function(x, ...) {
   cat("\n \n")
   cat(est_str)
   cat(paste(" with \n", inf_str, "\n \n"))
+  
+  ### >>> CMAversePLUS CHANGED <<<  show mediator draw scheme only for g-formula + postc present
+  if (identical(x$methods$model, "gformula") && length(x$variables$postc) != 0) {
+    cat(if (isTRUE(x$methods$draw_conditional))
+      "Mediator draws: conditional\n\n"
+      else
+        "Mediator draws: marginal\n\n")
+  }
+  ### >>> CMAversePLUS CHANGED <<<
+  
   print(x$effect.pe)
   cat("\n")
   cat(legend)
@@ -1222,6 +1331,28 @@ print.summary.cmest <- function(x, digits = 4, ...) {
   full <- x$methods$full
   model <- x$methods$model
   EMint <- x$variables$EMint
+  
+  ### >>> CMAversePLUS ADDED <<<
+  is_gformula <- identical(model, "gformula")
+  has_postc   <- length(x$variables$postc) != 0
+  
+  # TE label helper: emits plain TE or randomized analogue of TE, with the right symbol
+  make_te_lab <- function(kind = c("add","rate","rr","or","hr","msr")) {
+    kind <- match.arg(kind)
+    ra   <- is_gformula && has_postc
+    sym  <- if (kind == "add") { if (ra) "rte" else "te" } else { if (ra) "rRte" else "Rte" }
+    tail <- switch(kind,
+                   add = "",
+                   rate = " rate ratio",
+                   rr   = " risk ratio",
+                   or   = " odds ratio",
+                   hr   = " hazard ratio",
+                   msr  = " mean survival ratio")
+    desc <- if (ra) paste0("randomized analogue of total effect", tail) else paste0("total effect", tail)
+    paste0(sym, ": ", desc)
+  }
+  ### >>> CMAversePLUS ADDED <<<
+  
   if (model == "iorw") {
     if(x$multimp$multimp) yreg_mid <- x$reg.output[[1]]$yregTot
     if(!x$multimp$multimp) yreg_mid <- x$reg.output$yregTot
@@ -1346,6 +1477,49 @@ print.summary.cmest <- function(x, digits = 4, ...) {
     }
   }
   
+  ### >>> CMAversePLUS CHANGE: g-formula binary-scale override (minimal diff) <<<
+  ## expects your toggle at x$methods$binary_scale in {"OR","RR","RD"}
+  binary_scale <- tryCatch(x$methods$binary_scale, error = function(e) NULL)
+  is_binary_glm <- is_glm && family_yreg$family %in% c("binomial","quasibinomial")
+  
+  if (identical(model, "gformula") && is_binary_glm && !is.null(binary_scale)) {
+    
+    if (identical(binary_scale, "RR")) {
+      # force RR wording if user chose RR
+      scale  <- "risk ratio scale"
+      legend <- gsub("odds ratio", "risk ratio", legend, fixed = TRUE)
+      
+    } else if (identical(binary_scale, "RD")) {
+      # switch to additive wording for binary RD
+      scale <- "risk difference scale"
+      
+      if (length(x$variables$postc) != 0) {
+        if (full) {
+          if (EMint) {
+            legend <- "(cde: controlled direct effect; rpnde: randomized analogue of pure natural direct effect; rtnde: randomized analogue of total natural direct effect; rpnie: randomized analogue of pure natural indirect effect; rtnie: randomized analogue of total natural indirect effect; rte: randomized analogue of total effect; rintref: randomized analogue of reference interaction; rintmed: randomized analogue of mediated interaction; cde(prop): proportion cde; rintref(prop): proportion rintref; rintmed(prop): proportion rintmed; rpnie(prop): proportion rpnie; rpm: randomized analogue of overall proportion mediated; rint: randomized analogue of overall proportion attributable to interaction; rpe: randomized analogue of overall proportion eliminated)"
+          } else {
+            legend <- "(cde: controlled direct effect; rpnde: randomized analogue of pure natural direct effect; rtnde: randomized analogue of total natural direct effect; rpnie: randomized analogue of pure natural indirect effect; rtnie: randomized analogue of total natural indirect effect; rte: randomized analogue of total effect; rpm: randomized analogue of overall proportion mediated)"
+          }
+        } else {
+          legend <- "(cde: controlled direct effect; rpnde: randomized analogue of pure natural direct effect; rtnde: randomized analogue of total natural direct effect; rpnie: randomized analogue of pure natural indirect effect; rtnie: randomized analogue of total natural indirect effect; rte: randomized analogue of total effect)"
+        }
+      } else {
+        if (full) {
+          if (EMint) {
+            legend <- "(cde: controlled direct effect; pnde: pure natural direct effect; tnde: total natural direct effect; pnie: pure natural indirect effect; tnie: total natural indirect effect; te: total effect; intref: reference interaction; intmed: mediated interaction; cde(prop): proportion cde; intref(prop): proportion intref; intmed(prop): proportion intmed; pnie(prop): proportion pnie; pm: overall proportion mediated; int: overall proportion attributable to interaction; pe: overall proportion eliminated)"
+          } else {
+            legend <- "(cde: controlled direct effect; pnde: pure natural direct effect; tnde: total natural direct effect; pnie: pure natural indirect effect; tnie: total natural indirect effect; te: total effect; pm: overall proportion mediated)"
+          }
+        } else {
+          legend <- "(cde: controlled direct effect; pnde: pure natural direct effect; tnde: total natural direct effect; pnie: pure natural indirect effect; tnie: total natural indirect effect; te: total effect)"
+        }
+      }
+    } else if (identical(binary_scale, "OR")) {
+      # leave default OR wording
+    }
+  }
+  ### >>> END CMAversePLUS CHANGE <<<
+  
   # print summary of causal mediation analysis results
   if (x$methods$model == "rb") model_str <- "regression-based approach"
   if (x$methods$model == "wb") model_str <- "weighting-based approach"
@@ -1367,6 +1541,13 @@ print.summary.cmest <- function(x, digits = 4, ...) {
   cat("\n \n")
   cat(est_str)
   cat(paste(" with \n", inf_str, "\n \n"))
+  ### >>> CMAversePLUS CHANGED <<<  show mediator draw scheme only for g-formula + postc present
+  if (identical(x$methods$model, "gformula") && length(x$variables$postc) != 0) {
+    cat(if (isTRUE(x$methods$draw_conditional))
+      "Mediator draws: conditional\n\n"
+      else
+        "Mediator draws: marginal\n\n")
+  }
   printCoefmat(x$summarydf, digits = digits, has.Pvalue = TRUE)
   cat("\n")
   cat(legend)
