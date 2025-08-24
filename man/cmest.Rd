@@ -38,7 +38,9 @@ cmest(
   boot.ci.type = "per",
   nRep = 5,
   multimp = FALSE,
-  args_mice = NULL
+  args_mice = NULL,
+  draw_conditional = FALSE,
+  binary_scale = c("OR", "RR", "RD")
 )
 
 \method{print}{cmest}(x, ...)
@@ -150,6 +152,13 @@ each observation unit (used when \code{model} is \code{ne}). Default is \code{5}
 
 \item{args_mice}{a list of additional arguments passed to the \link[mice]{mice} function. See \link[mice]{mice}
 for details.}
+
+\item{draw_conditional}{logical. If TRUE, mediator draws are conditional (values not permuted). 
+If FALSE (default), mediator draws are marginal.}
+
+\item{binary_scale}{character. For binary outcomes only, choose the effect scale:
+"OR" (odds ratio), "RR" (risk ratio), or "RD" (risk difference). 
+Ignored for non-binary outcomes. Defaults to "OR" (although "RR" or "RD" are preferred).}
 
 \item{x}{an object of class \code{cmest}}
 
