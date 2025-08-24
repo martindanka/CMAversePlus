@@ -2,13 +2,16 @@ Package: CMAversePlus
 Type: Package
 Title: CMAversePlus: a friendly fork of CMAverse with extra g-formula options
 Version: 0.1.0
-Authors@R: c(
-    person("Baoyi", "Shi", role = c("aut")),
-    person("Ziqing", "Wang", role = c("aut")),
-    person("Christine", "Choirat", role = c("aut")),
-    person("Linda", "Valeri", role = c("aut")),
-    person("Martin", "Danka", email = "martin.danka.21@ucl.ac.uk", role = c("cre","ctb"))
-)
+
+Authors@R:
+    c(
+      person("Baoyi", "Shi", role = "aut"),
+      person("Ziqing", "Wang", role = "aut"),
+      person("Christine", "Choirat", role = "aut"),
+      person("Linda", "Valeri", role = "aut"),
+      person("Martin", "Danka", email = "martin.danka.21@ucl.ac.uk", role = c("cre","ctb"))
+    )
+
 Maintainer: Martin Danka <martin.danka.21@ucl.ac.uk>
 Description: A friendly fork of CMAverse that keeps the original workflow and API
     and adds focused extensions for mediation analysis with the g-formula:
@@ -24,35 +27,11 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports:
-    ggdag,
-    stringr,
-    simex,
-    dplyr,
-    mice,
-    nnet,
-    MASS,
-    survey,
-    survival,
-    SuppDists,
-    boot,
-    msm,
-    Matrix,
-    EValue,
-    ggplot2,
-    doSNOW,
-    foreach,
-    medflex,
-    mstate,
-    predint,
-    survminer
+    ggdag, stringr, simex, dplyr, mice, nnet, MASS, survey, survival,
+    SuppDists, boot, msm, Matrix, EValue, ggplot2, doSNOW, foreach,
+    medflex, mstate, predint, survminer
 Suggests:
-    knitr,
-    tidyverse,
-    kableExtra,
-    dagitty,
-    rmarkdown,
-    testthat,
-    covr
+    knitr, tidyverse, kableExtra, dagitty, rmarkdown, testthat, covr
 VignetteBuilder: knitr
 Depends: R (>= 2.10)
 RoxygenNote: 7.3.1
