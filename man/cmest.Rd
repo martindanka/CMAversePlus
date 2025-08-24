@@ -40,7 +40,7 @@ cmest(
   multimp = FALSE,
   args_mice = NULL,
   draw_conditional = FALSE,
-  binary_scale = c("OR", "RR", "RD")
+  binary_scale = "OR"
 )
 
 \method{print}{cmest}(x, ...)

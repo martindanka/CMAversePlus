@@ -429,8 +429,9 @@ cmest <- function(data = NULL, model = "rb",
                   postcreg = NULL,
                   astar = 0, a = 1, mval = NULL, yval = NULL, basecval = NULL,
                   nboot = 200, boot.ci.type = "per", nRep = 5, multimp = FALSE, args_mice = NULL,
-                  draw_conditional = FALSE, binary_scale = c("OR", "RR", "RD") # CMAversePlus Extra Args
+                  draw_conditional = FALSE, binary_scale = "OR" # CMAversePlus Extra Args
                   ) {
+  binary_scale <- match.arg(binary_scale, c("OR","RR","RD"))
   # function call
   cl <- match.call()
   # output list
