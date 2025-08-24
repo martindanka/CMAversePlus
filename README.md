@@ -76,7 +76,7 @@ on a slightly weaker positivity condition than the marginal draw
 When `model = "gformula"`:
 
 - If `postc` is specified, labels use the randomised-analogue notation
-  (e.g., `rpnde`, and totals are shown as `rte` / `rRte`).
+  (e.g., `rpnde`, and total effects are shown as `rte` / `rRte`).
 - If `postc` is not specified, labels use natural effect notation (e.g.,
   `pnde`, `te` / `Rte`).
 
