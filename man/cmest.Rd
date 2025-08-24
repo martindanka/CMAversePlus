@@ -186,7 +186,7 @@ reg.output contains regressions fitted by each of the imputed dataset,}
 \item{effect.ci.low}{the lower limits of 95\% confidence intervals of causal effects,}
 \item{effect.ci.high}{the higher limits of 95\% confidence intervals of causal effects,}
 \item{effect.pval}{p-values of causal effects,}
-...
+\item{...}{Additional elements used internally and subject to change.}
 }
 \description{
 \code{cmest} is used to implement six causal mediation analysis approaches including 

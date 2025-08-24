@@ -300,7 +300,7 @@
 #' \item{effect.ci.low}{the lower limits of 95\% confidence intervals of causal effects,}
 #' \item{effect.ci.high}{the higher limits of 95\% confidence intervals of causal effects,}
 #' \item{effect.pval}{p-values of causal effects,}
-#' ...
+#' \item{...}{Additional elements used internally and subject to change.}
 #'
 #' @seealso \link{ggcmest}, \link{cmdag}, \link{cmsens}, \link{svymultinom}.
 #'
