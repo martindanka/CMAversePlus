@@ -431,7 +431,7 @@ cmest <- function(data = NULL, model = "rb",
                   nboot = 200, boot.ci.type = "per", nRep = 5, multimp = FALSE, args_mice = NULL,
                   draw_conditional = FALSE, binary_scale = "OR" # CMAversePlus Extra Args
                   ) {
-  binary_scale <- match.arg(binary_scale, c("OR","RR","RD"))
+  binary_scale <- match.arg(binary_scale, choices = c("OR", "RR", "RD"))
   # function call
   cl <- match.call()
   # output list
@@ -455,7 +455,7 @@ cmest <- function(data = NULL, model = "rb",
   out$methods$full <- full
   
   ### >>> CMAversePLUS ADDED <<< Additional effects for binary outcomes ###
-  binary_scale <- match.arg(binary_scale)
+  binary_scale <- match.arg(binary_scale, c("OR", "RR", "RD"))
   out$methods$binary_scale <- binary_scale
   ### >>> CMAversePLUS ADDED <<< ### 
   
