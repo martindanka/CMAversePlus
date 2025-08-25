@@ -67,10 +67,14 @@ draw (via permutation); keeping `draw_conditional = FALSE` preserves
 that behaviour.
 
 Both approaches are valid and often yield similar results in practice.
-The conditional draw is the more standard definition and often
-corresponds to more sensible hypothetical interventions. It also relies
-on a slightly weaker positivity condition than the marginal draw
-(discussed in [Nguyen et al.,
+The conditional draw is the more standard definition ([VanderWeeele et
+al.,
+2014](https://journals.lww.com/epidem/pages/articleviewer.aspx?year=2014&issue=03000&article=00022&type=Fulltext);
+[Vansteelandt & Daniel,
+2017](https://journals.lww.com/epidem/abstract/2017/03000/interventional_effects_for_mediation_analysis_with.15.aspx))
+and often corresponds to more sensible hypothetical interventions. It
+also relies on a slightly weaker positivity condition than the marginal
+draw (discussed in [Nguyen et al.,
 2020](https://psycnet.apa.org/doiLanding?doi=10.1037%2Fmet0000299)).
 
 **3) Effect labels for interventional effects.**  
