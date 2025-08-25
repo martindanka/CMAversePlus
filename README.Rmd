@@ -107,17 +107,15 @@ sensible hypothetical interventions. It also relies on a slightly weaker
 positivity condition than the marginal draw (discussed in
 [Nguyen et al., 2020](https://psycnet.apa.org/doiLanding?doi=10.1037%2Fmet0000299)).
 
-**3) Effect labels for interventional effects.**  
+**3) Effect labels for the total effect.**  
 When `model = "gformula"`:
 
-- If `postc` is specified, labels use the randomised-analogue
-  notation (e.g., `rpnde`, and total effects are shown as `rte` / `rRte`).
-- If `postc` is not specified, labels use natural effect
-  notation (e.g., `pnde`, `te` / `Rte`).
+- If `postc` is not specified, the total effect is shown as `te` / `Rte`.
+- If `postc` is specified, the total effect is shown as `rte` / `rRte`.
 
-Importantly, when intermediate confounding is present, the sum/product of the interventional direct and indirect effect 
-is **not** the standard total effect. We label that quantity as the **randomised total effect** (`rte`) for clarity
-(also known as the *overall effect*).
+The sum/product of the interventional direct and indirect effect is **not** the standard total effect. 
+Following CMAverse convention for other effects, CMAversePlus will label this quantity as the **randomised total effect** 
+(`rte`) for clarity (also known as the *overall effect*).
 
 ## Installation
 
