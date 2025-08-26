@@ -47,12 +47,12 @@ df <- data.frame(
   Feature = c(
     "Effect measures for binary outcomes",
     "Conditional mediator draws",
-    "Effect labels"
+    "Total/overall effect label"
   ),
   `What it does` = c(
     "Choose odds ratio (OR), risk ratio (RR), or risk difference (RD)",
     "Choose conditional vs marginal mediator draws for interventional effects",
-    "Switch labels automatically between natural and interventional effects"
+    "Switch labels automatically between the total effect (te/Rte) and its randomised analogue (rte/rRte)" 
   ),
   `Use in` = c(
     "`cmest(model = 'gformula')`<br>Binary outcomes only",

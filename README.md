@@ -33,11 +33,11 @@ contacted them yet, although I may do so in future.
 
 ## What’s different? (when `model = "gformula"`)
 
-| Feature                             | What it does                                                             | Use in                                                |      Argument      |       Options        | Default |   Recommended    |
-|:------------------------------------|:-------------------------------------------------------------------------|:------------------------------------------------------|:------------------:|:--------------------:|:-------:|:----------------:|
-| Effect measures for binary outcomes | Choose odds ratio (OR), risk ratio (RR), or risk difference (RD)         | `cmest(model = 'gformula')`<br>Binary outcomes only   |   `binary_scale`   | `'OR' / 'RR' / 'RD'` | `'OR'`  | `'RR'` or `'RD'` |
-| Conditional mediator draws          | Choose conditional vs marginal mediator draws for interventional effects | `cmest(model = 'gformula')`<br>Interventional effects | `draw_conditional` |    `TRUE / FALSE`    | `FALSE` |      `TRUE`      |
-| Effect labels                       | Switch labels automatically between natural and interventional effects   | `cmest(model = 'gformula')`<br>Printing/summary only  |         —          |          —           |    —    |        —         |
+| Feature                             | What it does                                                                                         | Use in                                                |      Argument      |       Options        | Default |   Recommended    |
+|:------------------------------------|:-----------------------------------------------------------------------------------------------------|:------------------------------------------------------|:------------------:|:--------------------:|:-------:|:----------------:|
+| Effect measures for binary outcomes | Choose odds ratio (OR), risk ratio (RR), or risk difference (RD)                                     | `cmest(model = 'gformula')`<br>Binary outcomes only   |   `binary_scale`   | `'OR' / 'RR' / 'RD'` | `'OR'`  | `'RR'` or `'RD'` |
+| Conditional mediator draws          | Choose conditional vs marginal mediator draws for interventional effects                             | `cmest(model = 'gformula')`<br>Interventional effects | `draw_conditional` |    `TRUE / FALSE`    | `FALSE` |      `TRUE`      |
+| Total/overall effect label          | Switch labels automatically between the total effect (te/Rte) and its randomised analogue (rte/rRte) | `cmest(model = 'gformula')`<br>Printing/summary only  |         —          |          —           |    —    |        —         |
 
 *By default, both toggles are off. If you don’t change them,
 CMAversePlus behaves exactly like CMAverse.*
