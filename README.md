@@ -5,11 +5,11 @@
 
 <img src="man/figures/logo2.png" align="right" height="300" alt="CMAversePlus logo"/>
 
-**CMAversePlus** is a small “add-on package” based on the excellent
-[CMAverse](https://github.com/BS1125/CMAverse). I created this fork (see
-below) for teaching, personal use, and a few specific projects. I have
-tried to keep this page accessible to those who are new to R and/or
-GitHub.
+**CMAversePlus** is a small unofficial add-on to the excellent
+[CMAverse](https://github.com/BS1125/CMAverse) package. I created this
+fork (see below) for teaching, personal use, and a few specific
+projects. I have tried to keep this page accessible to those who are new
+to R and/or GitHub.
 
 - **CMAverse** is a widely used R package for causal mediation analysis.
 - **CMAversePlus** keeps the same workflow and commands, but adds a few
