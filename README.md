@@ -25,11 +25,11 @@ specific extras, feel free to use CMAversePlus.
 
 #### Why are these functions not part of CMAverse?
 
-CMAversePlus was created with my own specific teaching and project needs
-in mind. It works well for this purpose, but it has not yet been fully
-integrated with every feature of CMAverse. Achieving that would require
-additional work and discussion with the original authors. I haven’t
-contacted them yet, although I may do so in future.
+I created this add-on to support my own teaching and projects. It has
+been tested for the purposes described here, but I have not aimed for
+full integration with every feature of CMAverse. Achieving that would
+require additional work and discussion with the original authors. I
+haven’t contacted them yet, although I may do so in future.
 
 ## What’s different? (when `model = "gformula"`)
 
@@ -114,7 +114,7 @@ simulated dataset from the original [CMAverse
 vignette](https://bs1125.github.io/CMAverse/articles/post_exposure_confounding.html).
 
 When you install CMAversePlus, it is recommended that you always specify
-wheter you want functions from CMAverse or CMAversePlus, e.g., use
+whether you want functions from CMAverse or CMAversePlus, e.g., use
 `CMAversePlus::cmest()` or `CMAverse::cmest()`rather than `cmest()`.
 
 ``` r
