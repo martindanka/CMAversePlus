@@ -130,6 +130,19 @@ est.gformula <- function(data = NULL, indices = NULL, outReg = FALSE, full = TRU
   colnames(postc_a) <- colnames(postc_astar) <- postc
   
   if (length(postc) != 0) {
+
+    ### >>> CMAversePLUS FIX: the postc draw is wrapped in a function so that,
+    ### under draw_conditional = TRUE, the mediator model is fed an
+    ### INDEPENDENT simulation of postc. The conditional interventional draw
+    ### M*(s|C) requires the L feeding the mediator model to be independent
+    ### of the outcome-side L given (C, A); reusing the outcome-side postc
+    ### would give the outcome model the natural (L, M) joint instead, so the
+    ### same-world cells would collapse to plain g-formula means. A second,
+    ### independent draw (fresh errors for every family, including the
+    ### gaussian error vector) restores the required product form. <<<
+    draw_postc_set <- function() {
+    postc_a <- postc_astar <- data.frame(matrix(nrow = n, ncol = length(postc)))
+    colnames(postc_a) <- colnames(postc_astar) <- postc
     # simulating postc[p]
     for (p in 1:length(postc)) {
       # predict postc[p]
@@ -210,12 +223,39 @@ est.gformula <- function(data = NULL, indices = NULL, outReg = FALSE, full = TRU
       }
     }
     
-    rm(postcdesign_a, postcdesign_astar, type, postcpred_a, postcpred_astar, mid_a, mid_astar, full_index, n_full)
+    list(a = postc_a, astar = postc_astar)
+    }
+
+    # Outcome-side postc: used in every ydesign matrix
+    postc_set_y <- draw_postc_set()
+    postc_a <- postc_set_y$a
+    postc_astar <- postc_set_y$astar
+    if (isTRUE(draw_conditional)) {
+      # Mediator-side postc: an independent second draw, used ONLY to
+      # generate the mediator values (the two-stream construction)
+      postc_set_m <- draw_postc_set()
+      postc_a_m <- postc_set_m$a
+      postc_astar_m <- postc_set_m$astar
+      rm(postc_set_m)
+    } else {
+      # Marginal (permuted) draws: the shuffle below breaks the L-M link, so
+      # the mediator may share the outcome-side postc as in original CMAverse
+      postc_a_m <- postc_a
+      postc_astar_m <- postc_astar
+    }
+    rm(postcdesign_a, postcdesign_astar, postc_set_y)
+  } else {
+    postc_a_m <- postc_a
+    postc_astar_m <- postc_astar
   }
+  ### >>> END CMAversePLUS FIX <<<
   
   # design matrices for simulating mediator[p]
-  mdesign_a <- data.frame(a_sim, basec_sim, postc_a)
-  mdesign_astar <- data.frame(astar_sim, basec_sim, postc_astar)
+  ### CMAversePLUS FIX: mediator draws condition on the mediator-side postc
+  ### (an independent draw under draw_conditional = TRUE; the outcome-side
+  ### draw otherwise, where the shuffle breaks the coupling anyway)
+  mdesign_a <- data.frame(a_sim, basec_sim, postc_a_m)
+  mdesign_astar <- data.frame(astar_sim, basec_sim, postc_astar_m)
   colnames(mdesign_a) <- colnames(mdesign_astar) <- c(exposure, basec, postc)
   m_a <- m_astar <- data.frame(matrix(nrow = n, ncol = length(mediator)))
   colnames(m_a) <- colnames(m_astar) <- mediator

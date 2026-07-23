@@ -1,7 +1,7 @@
 Package: CMAversePlus
 Type: Package
 Title: CMAversePlus: a friendly fork of CMAverse with extra g-formula options
-Version: 0.1.0
+Version: 0.1.1
 Authors@R:
     c(
       person("Baoyi", "Shi", role = "aut"),
