@@ -33,34 +33,34 @@ haven’t contacted them yet, although I may do so in future.
 
 ## What’s different? (when `model = "gformula"`)
 
-| Feature                             | What it does                                                                                         | Use in                                                |      Argument      |       Options        | Default |   Recommended    |
-|:------------------------------------|:-----------------------------------------------------------------------------------------------------|:------------------------------------------------------|:------------------:|:--------------------:|:-------:|:----------------:|
-| Effect measures for binary outcomes | Choose odds ratio (OR), risk ratio (RR), or risk difference (RD)                                     | `cmest(model = 'gformula')`<br>Binary outcomes only   |   `binary_scale`   | `'OR' / 'RR' / 'RD'` | `'OR'`  | `'RR'` or `'RD'` |
-| Conditional mediator draws          | Choose conditional vs marginal mediator draws for interventional effects                             | `cmest(model = 'gformula')`<br>Interventional effects | `draw_conditional` |    `TRUE / FALSE`    | `FALSE` |      `TRUE`      |
-| Total/overall effect label          | Switch labels automatically between the total effect (te/Rte) and its randomised analogue (rte/rRte) | `cmest(model = 'gformula')`<br>Printing/summary only  |         —          |          —           |    —    |        —         |
+| Feature | What it does | Use in | Argument | Options | Default | Recommended |
+|:---|:---|:---|:--:|:--:|:--:|:--:|
+| Effect measures for binary outcomes | Choose odds ratio (OR), risk ratio (RR), or risk difference (RD) | `cmest(model = 'gformula')`<br>Binary outcomes only | `binary_scale` | `'OR' / 'RR' / 'RD'` | `'OR'` | `'RR'` or `'RD'` |
+| Conditional mediator draws | Choose conditional vs marginal mediator draws for interventional effects | `cmest(model = 'gformula')`<br>Interventional effects | `draw_conditional` | `TRUE / FALSE` | `FALSE` | `TRUE` |
+| Total/overall effect label | Switch labels automatically between the total effect (te/Rte) and its randomised analogue (rte/rRte) | `cmest(model = 'gformula')`<br>Printing/summary only | — | — | — | — |
 
 *By default, both toggles are off. If you don’t change them,
 CMAversePlus behaves exactly like CMAverse.*
 
 ## New features (details)
 
-> **Note (scope)**  
+> **Note (scope)**\
 > All new options currently target **single-mediator** settings. If you
 > use multiple mediators, use the original package or proceed at your
 > own risk.
 
-**1) Additional effect measures for binary outcomes.**  
+**1) Additional effect measures for binary outcomes.**\
 Use `binary_scale` to choose which effects are reported under
 g-computation:
 
-- `"OR"` — odds ratio (CMAverse default)  
-- `"RR"` — risk ratio  
+- `"OR"` — odds ratio (CMAverse default)\
+- `"RR"` — risk ratio\
 - `"RD"` — risk difference
 
 Risk ratios/differences are often more intuitive to interpret than odds
 ratios.
 
-**2) Interventional effects via conditional draws of M.**  
+**2) Interventional effects via conditional draws of M.**\
 Set `draw_conditional = TRUE` to compute interventional effects using a
 conditional mediator draw. The CMAverse implementation uses a marginal
 draw (via permutation); keeping `draw_conditional = FALSE` preserves
@@ -77,7 +77,7 @@ also relies on a slightly weaker positivity condition than the marginal
 draw (discussed in [Nguyen et al.,
 2020](https://psycnet.apa.org/doiLanding?doi=10.1037%2Fmet0000299)).
 
-**3) Effect labels for the total effect.**  
+**3) Effect labels for the total effect.**\
 When `model = "gformula"`:
 
 - If `postc` is not specified, the total effect is shown as `te` /
@@ -260,24 +260,24 @@ summary(fit)
     ##  
     ## Mediator draws: conditional
     ## 
-    ##                   Estimate  Std.error    95% CIL 95% CIU  P.val    
-    ## Rcde             0.5049460  0.1899547  0.4145193   0.669 <2e-16 ***
-    ## rRpnde           0.5259535  0.1367895  0.4744698   0.658 <2e-16 ***
-    ## rRtnde           0.5136159  0.1674198  0.4403003   0.665 <2e-16 ***
-    ## rRpnie           0.9693853  0.0339457  0.9546793   1.000      1    
-    ## rRtnie           0.9466459  0.0271223  0.9282483   0.965 <2e-16 ***
-    ## rRte             0.4978918  0.1448511  0.4404258   0.635 <2e-16 ***
-    ## ERcde           -0.4698087  0.2081868 -0.5848855  -0.305 <2e-16 ***
-    ## rERintref       -0.0042378  0.0713974 -0.0357995   0.060      1    
-    ## rERintmed        0.0025529  0.0420074 -0.0342233   0.022      1    
-    ## rERpnie         -0.0306147  0.0339457 -0.0452922   0.000      1    
-    ## ERcde(prop)      0.9356722  0.1560848  0.8352483   1.045 <2e-16 ***
-    ## rERintref(prop)  0.0084399  0.1540688 -0.1056705   0.101      1    
-    ## rERintmed(prop) -0.0050844  0.0914716 -0.0627902   0.060      1    
-    ## rERpnie(prop)    0.0609723  0.0934876  0.0006196   0.126      1    
-    ## rpm              0.0558879  0.0020160  0.0607218   0.063 <2e-16 ***
-    ## rint             0.0033555  0.0625972 -0.0455683   0.039      1    
-    ## rpe              0.0643278  0.1560848 -0.0449487   0.165      1    
+    ##                  Estimate Std.error   95% CIL 95% CIU  P.val    
+    ## Rcde             0.504946  0.132593  0.354710   0.533 <2e-16 ***
+    ## rRpnde           0.527172  0.114841  0.434969   0.589 <2e-16 ***
+    ## rRtnde           0.512644  0.122663  0.389883   0.555 <2e-16 ***
+    ## rRpnie           0.964164  0.019986  0.947993   0.975 <2e-16 ***
+    ## rRtnie           0.937592  0.013783  0.873797   0.892 <2e-16 ***
+    ## rRte             0.494272  0.108478  0.380074   0.526 <2e-16 ***
+    ## ERcde           -0.468424  0.140011 -0.616369  -0.428 <2e-16 ***
+    ## rERintref       -0.004404  0.025170  0.018123   0.052 <2e-16 ***
+    ## rERintmed        0.002936  0.013623 -0.029744  -0.011 <2e-16 ***
+    ## rERpnie         -0.035836  0.019986 -0.051997  -0.025 <2e-16 ***
+    ## ERcde(prop)      0.926238  0.067808  0.903554   0.995 <2e-16 ***
+    ## rERintref(prop)  0.008708  0.034004 -0.083572  -0.038 <2e-16 ***
+    ## rERintmed(prop) -0.005806  0.017799  0.023961   0.048 <2e-16 ***
+    ## rERpnie(prop)    0.070861  0.051603  0.041044   0.110 <2e-16 ***
+    ## rpm              0.065055  0.033803  0.088919   0.134 <2e-16 ***
+    ## rint             0.002901  0.016205 -0.035697  -0.014 <2e-16 ***
+    ## rpe              0.073762  0.067808  0.005346   0.096 <2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
